@@ -1,0 +1,58 @@
+#include <algorithm>
+#include <vector>
+#include <iostream>
+#define MAXN 100000 //максимум для n
+#define INF 1000000001 //максимум для чисел во вводе
+
+using namespace std;
+int main()
+{
+    //freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
+    int n; //количество чисел во вводе
+    cin >> n;
+    vector<int> input; //вводимые числа
+    for (int i = 0; i < n; i++)
+    {
+        int temp; //промежуточная переменная
+        cin >> temp;
+        input.push_back(temp);
+    }
+    vector<int> dynamic; //вектор, в котором будет считаться динамика
+    int parent[MAXN + 1]; //массив, в котором для каждого элемента динамики хранится, какое число из ввода в нем последнее
+    int parent_a[MAXN + 1]; //массив, в котором для каждого числа из ввода хранится, после какого в оптимальной подпоследовательности оно идет
+    dynamic.push_back(-INF);
+    for (int i = 1; i <= n; ++i)
+        dynamic.push_back(INF); //инициализируем динамику бесконечностями
+    for (int i = 0; i < n; i++)
+    {
+        parent[i] = -INF;
+        parent_a[i] = -INF;
+    }
+    for (int i = 0; i < n; i++)
+    {//динамика такая: вектор от 0 до n — это минимальное число, на которое оканчивается возрастающая подпоследовательность длины i
+        int j = int(upper_bound (dynamic.begin(), dynamic.end(), input[i]) - dynamic.begin()); //находим первое число, которое больше нас в динамике
+        if (dynamic[j-1] < input[i] && input[i] < dynamic[j]) //проверяем, меняем ли мы найденное значение динамики
+        {
+            dynamic[j] = input[i]; //ставим нас как минимальное число, на которое оканчивается подпоследовательность длины j
+            parent[j] = i; //поддерживаем массивы предков
+            parent_a[i] = parent[j - 1];
+        }
+    }
+    int i;
+    for (i = n; i > 0 && dynamic[i] == INF; i--); //находим максимальную подпоследовательность
+    vector<int> result; // результирующий вектор
+    int part = parent[i]; //часть подпоследовательности
+    while (part != -INF)
+    {
+        result.push_back(input[part]);
+        part = parent_a[part];
+    }
+    reverse(result.begin(), result.end());
+    int length = result.size();
+    cout << length << endl;
+    for (int i = 0; i < length; i++)
+        cout << result[i] << " ";
+    cout << endl;
+    return 0;
+}
