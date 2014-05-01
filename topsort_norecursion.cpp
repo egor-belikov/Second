@@ -17,9 +17,13 @@ int main()
         list.push_back(temp);
     for (int i = 0; i < m; i++)
     {
-        int x, y;
-        cin >> x >> y;
-        list[x - 1].push_back(y - 1);
+        int count; //количество вершин, в которые из текущей ведут ребра
+        for (int j = 0; j < count; j++)
+        {
+            int neighbor;
+            cout << neighbor;
+            list[i].push_back(neighbor - 1);
+        }
     }
     vector<int> color; //0 — белый, 1 — серый, 2 — черный
     for (int i = 0; i < n; i++)
