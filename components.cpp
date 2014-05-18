@@ -109,7 +109,6 @@ int main()
     }
     auto component1 = kosaraju(n, g, gr);
     auto component2 = tarjan(n, g);
-    cout << (component1 == component2);
     return 0;
 }
 
