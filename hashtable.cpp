@@ -7,6 +7,7 @@
 #define p 23 //множитель для хеш-функции. взято какое-то простое число для лучшего распределения
 using namespace std;
 
+
 class HashTable
 {
 private:
