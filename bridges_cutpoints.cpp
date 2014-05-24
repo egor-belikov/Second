@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void dfs_cutpoints (const vector<vector<int> > &g, vector<int>* tin, vector<int>* fup, vector<int>* res, vector<bool>* used, int timer, int v, int p = -1) {
+void dfs_cutpoints (const vector<vector<int> > &g, vector<int>* tin, vector<int>* fup, set<int>* res, vector<bool>* used, int timer, int v, int p = -1) {
 	(*used)[v] = true;
 	(*tin)[v] = (*fup)[v] = timer++;
 	int children = 0;
@@ -18,21 +18,27 @@ void dfs_cutpoints (const vector<vector<int> > &g, vector<int>* tin, vector<int>
 			dfs_cutpoints (g, tin, fup, res, used, timer, to, v);
 			(*fup)[v] = min ((*fup)[v], (*fup)[to]);
 			if ((*fup)[to] >= (*tin)[v] && p != -1)
-                (*res).push_back(v);
+                (*res).insert(v);
             ++children;
 		}
 	}
 	if (p == -1 && children > 1)
-        (*res).push_back(v);
+        (*res).insert(v);
 }
 
 vector<int> cutpoints(const vector<vector<int> > &g)
 {
-    int n = g.size(), timer = 0;
-    vector<int> res, tin(n, 0), fup(n, 0);
+    int n = (int)g.size(), timer = 0;
+    vector<int> tin(n, 0), fup(n, 0), vecres;
+    set<int> res;
     vector<bool> used(n, false);
-    dfs_cutpoints(g, &tin, &fup, &res, &used, timer, 0);
-    return res;
+    for (int i = 0; i < n; i++)
+        if (!used[i])
+            dfs_cutpoints(g, &tin, &fup, &res, &used, timer, i);
+    for (set<int>::iterator it = res.begin(); it != res.end(); it++)
+        vecres.push_back(*it);
+    sort(vecres.begin(), vecres.end());
+    return vecres;
 }
 
 void dfs_bridges (const vector<vector<int> > &g, vector<int>* tin, vector<int>* fup, vector<pair<int, int> >* res, vector<bool>* used, int timer, int v, int p = -1) {
@@ -75,7 +81,7 @@ void dfs_component_cutpoints(const vector<vector<int> > &g, const set<int> &allc
 }
 vector<vector<int> > component_cutpoints(const vector<vector<int> > &g)
 {
-    int n = g.size();
+    int n = (int)g.size();
     vector<int> br = cutpoints(g), t;
     vector<bool> used(n, false);
     set<int> allcutpoints;
@@ -122,8 +128,27 @@ vector<vector<int> > component_bridges(const vector<vector<int> > &g)
 }
 int main()
 {
-
     vector<vector<int> > a;
+    int n, m;
+    cin >> n >> m;
+    for (int i = 0; i < n; i++)
+    {
+        vector<int> t;
+        a.push_back(t);
+    }
+    for (int i = 0; i < m; i++)
+    {
+        int x, y;
+        cin >> x >> y;
+        x--; y--;
+        a[x].push_back(y);
+        a[y].push_back(x);
+    }
+    vector<int>res = cutpoints(a);
+    cout << res.size() << endl;
+    for (int i = 0; i < res.size(); i++)
+        cout << res[i] + 1 << endl;
+
     return 0;
 }
 
