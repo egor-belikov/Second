@@ -31,7 +31,7 @@ void fordbellman(const vector<edge> &e, int v)
                     p[e[j].b] = e[j].a;
                     x = e[j].b;
                 }
-
+        
     }
     if (x == -1)
         cout << "No negative cycle from " << v;
@@ -57,7 +57,7 @@ void fordbellman(const vector<edge> &e, int v)
 
 void print_cycle(const vector<vector<int> > &r, int x, int y)
 {
-    if (r[x][y] == -1)
+    if ((r[x][y] == -1) || ((x == r[x][y]) && (x == y)))
         cout << x + 1 << " ";
     else
     {
@@ -69,6 +69,10 @@ void print_cycle(const vector<vector<int> > &r, int x, int y)
 void floyd(const vector<vector<double> > &d)
 {
     vector<vector<double> > a = d;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            if (i < j)
+                swap(a[i][j], a[j][i]);
     vector<vector<int> > r;
     for (int i = 0; i < n; i++)
     {
@@ -78,14 +82,12 @@ void floyd(const vector<vector<double> > &d)
     vector<int> cycle;
     int start;
     bool cycle_exists = false;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            for (int k = 0; k < n; k++)
-                if (((a[j][i] > 0) && (a[i][k] > 0)) && (a[j][i] * a[i][k] > a[j][k]))
+    for (int i = 0; (i < n) && cycle_exists; i++)
+        for (int j = 0; j < n && cycle_exists; j++)
+            for (int k = 0; k < n && cycle_exists; k++)
+                if (a[j][i] * a[i][k] > a[j][k])
                 {
-                    a[j][k] = min(INF, a[j][i] * a[i][k]);
+                    a[j][k] = a[j][i] * a[i][k];
                     r[j][k] = i;
                     if ((j == k) && (a[j][j] > 1))
                     {
@@ -94,12 +96,6 @@ void floyd(const vector<vector<double> > &d)
                         break;
                     }
                 }
-            if (cycle_exists)
-                break;
-        }
-        if (cycle_exists)
-            break;
-    }
     if (!cycle_exists)
         cout << "No negative cycle\n";
     else
@@ -108,7 +104,7 @@ void floyd(const vector<vector<double> > &d)
         print_cycle(r, start, start);
         cout << start + 1 << endl;
     }
-        
+    
     
 }
 int main()
@@ -136,4 +132,3 @@ int main()
     fordbellman(e, 0);
     floyd(a);
 }
-
